@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Filtering and Visualizations in Tooltips</title>
+    
+    <!-- Load d3.js -->
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+    <!-- Add graph element styling -->
+    <style>
+      body{
+        background-image: linear-gradient(white, rgb(138, 102, 224));
+        font: 14px Arial; 
+      }
+
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+
+      .dot {
+        stroke: #000;
+      }
+
+      .tooltip {
+        border-style: groove;
+        font: 14px;
+        font-family: 'Open sans', sans-serif; 
+        font-weight: bold; 
+        position: absolute;
+        width: 170px;
+        height: 110px;
+        pointer-events: none;
+        background-color: aliceblue;
+      }
+
+      h1 {
+        font-family: 'Open sans', sans-serif; 
+        font-weight: lighter; 
+        font-size: 20px;
+      }
+      
+    </style>
+    <h1>Fertility vs. Life Expectancy (1980)</h1>
+    <!-- Create a div where the graph will take place -->
+    <div id="my_dataviz"></div>
+    <script src="tooltip.js"></script>
+
+</body>
+</html>
