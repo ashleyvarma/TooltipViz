@@ -119,19 +119,19 @@ function drawScatterPlot(data) {
         .style("opacity", "0.5")
         .on("mouseover", tipMouseover)
         .on("mouseout", tipMouseout);
+    
+    let pop = data.filter(function(d) { return d.population > 100000000 })
 
     svg.selectAll("dot")
-        .data(data)
+        .data(pop)
         .enter()
-        .append("text")
-        .filter(function(d) { return d.population > 100000000 })        // filter for 100 million+ population
-        .attr("x", xMap)
-        .attr("y", yMap)
+        .append('text')
         .attr("font-family", "sans-serif")
         .attr("font-size", "14px")
         .attr("font-weight", "bold")
-        .style("text-anchor", "right")
-        .text(function(d) { return d.country})
+        .attr('x', function(d) { return xScale(+d['fertility']) + 20})
+        .attr('y', function(d) { return yScale(+d['life_expectancy'])})
+        .text(function(d) { return d['country'] })
 
 }     
     
