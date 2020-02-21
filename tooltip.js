@@ -40,14 +40,52 @@ var tooltip = d3.select("body").append("div")
 
 // tooltip mouseover event handler
 var tipMouseover = function(d) {
-    var html  = d["country"] + "<br/>" + "<br>" + d["population"] + "<br/>" + "<br>" + d["year"] + "<br/>";
+    data = d3.csv("gapminder.csv")
+    var html  = "<br>" + d["country"] + "</br>";
+
+    // get year min and max for us
+    const yearLimits = d3.extent(data, d => d['year'])
+    // get scaling function for years (x axis)
+    const xScale = d3.scale.linear()
+        .domain([yearLimits[0], yearLimits[1]])
+        .range([margin.left, width + margin.left])
+
+    // make x axis
+    const xAxis2 = tooltip.append("g")
+        .attr("transform", "translate(0," + (height + margin.top) + ")")
+        .call(d3.axisBottom(xScale))
+
+    // get min and max life expectancy for US
+    const lifeExpectancyLimits = d3.extent(data, d => d['life_expectancy']) 
+
+    // get scaling function for y axis
+    const yScale = d3.scale.linear()
+        .domain([lifeExpectancyLimits[1], lifeExpectancyLimits[0]])
+        .range([margin.top, margin.top + height])
+
+    // make y axis
+    const yAxis2 = tooltip.append("g")
+        .attr("transform", "translate(" + margin.left + ",0)")
+        .call(d3.axisLeft(yScale))
+
+    // d3's line generator
+    const line = d3.svg.line()
+        .x(d => xScale(+d['year'])) // set the x values for the line generator
+        .y(d => yScale(+d['life_expectancy'])) // set the y values for the line generator
 
     tooltip.html(html)
         .style("left", (d3.event.pageX + 15) + "px")
-        .style("top", (d3.event.pageY - 28) + "px")
+        .style("top", (d3.event.pageY - 15) + "px")
     .transition()
         .duration(200) // ms
         .style("opacity", .9) // started as 0!
+
+    // append line to svg
+    tooltip.append("path")
+        .datum(d)
+        .attr("d", function(d) { return line(d) })
+        .attr("fill", "steelblue")
+        .attr("stroke", "steelblue")
 
 };
 // tooltip mouseout event handler
@@ -77,7 +115,7 @@ function drawScatterPlot(data) {
     // update x axis scale
     xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
     // update y axis scale
-    yScale.domain([d3.min(data, yValue)-5, d3.max(data, yValue)+10]);
+    yScale.domain([d3.min(data, yValue)-5, d3.max(data, yValue)+10]); 
 
     // x-axis
     svg.append("g")
@@ -121,6 +159,21 @@ function drawScatterPlot(data) {
         .on("mouseout", tipMouseout);
     
     let pop = data.filter(function(d) { return d.population > 100000000 })
+    // redraw larger dots
+    svg.selectAll("dot")
+        .data(pop)
+        .enter()
+        .append("circle")
+        .attr("class", "dot")
+        .attr("r", function(d) {
+            return Math.sqrt(d.population)/600
+        })
+        .attr("cx", xMap)
+        .attr("cy", yMap)
+        .style("fill", "RGB(253, 171, 219)") 
+        .style("opacity", "0.5")
+        .on("mouseover", tipMouseover)
+        .on("mouseout", tipMouseout);
 
     svg.selectAll("dot")
         .data(pop)
