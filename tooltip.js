@@ -47,26 +47,41 @@ var tipMouseover = function(d) {
     const yearLimits = d3.extent(data, d => d['year'])
     // get scaling function for years (x axis)
     const xScale = d3.scale.linear()
-        .domain([yearLimits[0], yearLimits[1]])
+        .domain([d3.min(data, yearLimits)-1, d3.max(data, yearLimits)+1])
         .range([margin.left, width + margin.left])
 
     // make x axis
-    const xAxis2 = tooltip.append("g")
+    tooltip.append("g")
         .attr("transform", "translate(0," + (height + margin.top) + ")")
-        .call(d3.axisBottom(xScale))
+        // .call(d3.axisBottom(xScale))
+        .call(xScale)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("Year");
 
     // get min and max life expectancy for US
-    const lifeExpectancyLimits = d3.extent(data, d => d['life_expectancy']) 
+    const populationLimits = d3.extent(data, d => d['population']) 
 
     // get scaling function for y axis
     const yScale = d3.scale.linear()
-        .domain([lifeExpectancyLimits[1], lifeExpectancyLimits[0]])
+        .domain([d3.min(data, populationLimits)-1, d3.max(data, populationLimits)+1])
         .range([margin.top, margin.top + height])
 
     // make y axis
-    const yAxis2 = tooltip.append("g")
+    tooltip.append("g")
         .attr("transform", "translate(" + margin.left + ",0)")
-        .call(d3.axisLeft(yScale))
+        // .call(d3.axisLeft(yScale))
+        .call(yScale)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Population");
 
     // d3's line generator
     const line = d3.svg.line()
